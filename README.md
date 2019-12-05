@@ -1,6 +1,6 @@
 # k-dimensional Weisfeiler-Lehman for Group Isomorphism
 
-First version of an implementation of the k-dimensional Weisfeiler-Lehman method to test Group Isomorphism between 2 groups given by a list of generators.  
+An implementation of the k-dimensional Weisfeiler-Lehman method in Java to test Group Isomorphism between 2 groups given by a list of generators.  
 Currently it is only 2-dimensional, but it should be easy to extend it to any k.
 
 ## Information
