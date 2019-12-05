@@ -25,6 +25,7 @@ public class Permutation implements Comparable<Permutation> {
 		return new Permutation(arrayOut);
 	}
 	
+	// Copies the Permutation starting from index 0
 	public Permutation copy() {
 		Integer[] arrayCopy = new Integer[array.length];
 		
@@ -35,6 +36,8 @@ public class Permutation implements Comparable<Permutation> {
 		return new Permutation(arrayCopy);
 	}
 
+	// Assumes both arrays' lengths are equal
+	// Compares starting from index 1
 	public int compareTo(Permutation p) {
 		int cmp;
 		
@@ -44,6 +47,10 @@ public class Permutation implements Comparable<Permutation> {
 		}
 		
 		return 0;
+	}
+	
+	public boolean equals(Permutation p) {
+		return compareTo(p) == 0;
 	}
 	
 }

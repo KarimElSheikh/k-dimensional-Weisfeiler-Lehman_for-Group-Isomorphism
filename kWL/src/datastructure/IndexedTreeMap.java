@@ -20,10 +20,14 @@ package datastructure;
  * Email: k_elsheikh18@cs.uni-kl.de
  * I'm just reporting that I've made the following changes in this file:
  * Changed the access modifier of the following variables from private to protected:
- * root, size, modCount, comparator.
+ * comparator, root, size, modCount.
  * Changed the access modifier of the following method from private to protected:
- * fixAfterInsertion().
- * 
+ * fixAfterInsertion(Entry<K, V>).
+ * That was done to allow inheritance where it's possible to add the
+ * increment(K, Integer) method that is based around the method put(K, V)
+ * which accesses those variables/methods. Example of Implementation of
+ * the method is in the Subclass IndexedTreeMap2.
+ *
  * All credits goes to Vitaly Sazanovich for making this.
  */
 

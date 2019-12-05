@@ -30,6 +30,8 @@ public class Pair implements Comparable<Pair> {
 		
 		// yield.length is not compared
 		// i.e., number of generators is assumed to be the same
+		// yield[i].length is not compared
+		// i.e., order of groups is assumed to be the same
 		for (int i = 0; i < yield.length; i++) {			
 			for (int j = 0; j < yield[i].length; j++) {
 				cmp = yield[i][j] - p.yield[i][j];

@@ -2,38 +2,32 @@ package datastructure;
 
 import java.util.Comparator;
 
-import datastructure.IndexedTreeMap.Entry;
-import pair.Pair;
-
-public class IndexedTreeMap2 extends IndexedTreeMap<Pair, Integer> {
-
-	/**
+public class IndexedTreeMap2<K> extends IndexedTreeMap<K, Integer> {
+	
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 183140471235285341L;
-
-	public IndexedTreeMap2() {
-		super();
-	}
+	private static final long serialVersionUID = 2240876683681077066L;
 	
-	public Integer increment(Pair key) {
-        Entry<Pair, Integer> t = root;
+	// Note: Comments below are from the original author of IndexedTreeMap for the put(K, V) method
+	public Integer increment(K key) {
+        Entry<K, Integer> t = root;
         if (t == null) {
             // TBD:
             // 5045147: (coll) Adding null to an empty IndexedTreeSet should
             // throw NullPointerException
             //
             // compare(key, key); // type check
-            root = new Entry<Pair, Integer>(key, 1, null);
+            root = new Entry<K, Integer>(key, 1, null);
             root.weight = 1;
             size = 1;
             modCount++;
             return null;
         }
         int cmp;
-        Entry<Pair, Integer> parent;
+        Entry<K, Integer> parent;
         // split comparator and comparable paths
-        Comparator<? super Pair> cpr = comparator;
+        Comparator<? super K> cpr = comparator;
         if (cpr != null) {
             do {
                 parent = t;
@@ -48,7 +42,8 @@ public class IndexedTreeMap2 extends IndexedTreeMap<Pair, Integer> {
         } else {
             if (key == null)
                 throw new NullPointerException();
-            Comparable<? super Pair> k = (Comparable<? super Pair>) key;
+            @SuppressWarnings("unchecked")
+			Comparable<? super K> k = (Comparable<? super K>) key;
             do {
                 parent = t;
                 cmp = k.compareTo(t.key);
@@ -60,7 +55,7 @@ public class IndexedTreeMap2 extends IndexedTreeMap<Pair, Integer> {
                     return t.setValue(t.getValue() + 1);
             } while (t != null);
         }
-        Entry<Pair, Integer> e = new Entry<Pair, Integer>(key, 1, parent);
+        Entry<K, Integer> e = new Entry<K, Integer>(key, 1, parent);
         if (cmp < 0) {
             parent.left = e;
         } else {
