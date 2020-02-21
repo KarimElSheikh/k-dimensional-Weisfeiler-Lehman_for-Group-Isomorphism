@@ -31,7 +31,7 @@ for /F "tokens=*" %%a in (gap29548.tmp) do (
 	)
 	endlocal
 )
-goto :writtenTheBatchFileNowRunIt REM (to run GAP with the correct working Directory basically speaking)
+goto :writtenTheBatchFileNowRunIt REM (to run GAP with the correct working Directory)
 
 :writtenTheBatchFileNowRunIt
 call gap29548.tmp.bat
