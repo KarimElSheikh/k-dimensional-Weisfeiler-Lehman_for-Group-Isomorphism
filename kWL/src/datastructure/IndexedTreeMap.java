@@ -1,6 +1,25 @@
 package datastructure;
 
 /**
+ * User: Karim Elsheikh
+ * Date: 14.02.2020
+ * Time: 01:53
+ * Email: k_elsheikh18@cs.uni-kl.de
+ * I'm reporting that I've made the following changes in this file:
+ * 
+ * Changed the access modifier of the following variables from private to protected:
+ * comparator, root, size, modCount.
+ * Changed the access modifier of the following method from private to protected:
+ * fixAfterInsertion(Entry<K, V>).
+ * 
+ * That was done to make a subclass able to implement the increment(K, Integer)
+ * method which is based around the method put(K, V) and which needs access to
+ * those variables/methods. The Implementation of the method is used in
+ * the Subclass IndexedTreeMap2 in this project.
+ *
+ * The rest of the code below is exactly the same as in the 07.02.2013 version by "Vitaly Sazanovich".
+ */
+/**
  * User: Vitaly Sazanovich
  * Date: 07/02/13
  * Time: 19:16
@@ -11,24 +30,6 @@ package datastructure;
  *
  * Copyright (c) 2006, Oracle and/or its affiliates. All rights reserved.
  * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-
-/**
- * User: Karim Elsheikh
- * Date: 03/12/19
- * Time: 00:45
- * Email: k_elsheikh18@cs.uni-kl.de
- * I'm just reporting that I've made the following changes in this file:
- * Changed the access modifier of the following variables from private to protected:
- * comparator, root, size, modCount.
- * Changed the access modifier of the following method from private to protected:
- * fixAfterInsertion(Entry<K, V>).
- * That was done to allow inheritance where it's possible to add the
- * increment(K, Integer) method that is based around the method put(K, V)
- * which accesses those variables/methods. Example of Implementation of
- * the method is in the Subclass IndexedTreeMap2.
- *
- * All credits goes to Vitaly Sazanovich for making this.
  */
 
 import java.util.*;
@@ -100,7 +101,7 @@ import java.util.*;
  *
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
- * @author Josh Bloch, Doug Lea, Vitaly Sazanovich
+ * @author Josh Bloch, Doug Lea, Vitaly Sazanovich, Karim Elsheikh
  * @version 1.73, 05/10/06
  * @see java.util.Map
  * @see java.util.HashMap

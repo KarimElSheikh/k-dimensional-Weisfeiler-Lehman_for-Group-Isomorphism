@@ -1,15 +1,14 @@
 package datastructure;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class IndexedTreeMap2<K> extends IndexedTreeMap<K, Integer> {
+public class IndexedTreeMap2<K> extends IndexedTreeMap<K, Integer> implements Serializable {
 	
-    /**
-	 * 
-	 */
+	/* version ID for serialised form. */
 	private static final long serialVersionUID = 2240876683681077066L;
 	
-	// Note: Comments below are from the original author of IndexedTreeMap for the put(K, V) method
+	/* Note: Comments below are from the original author "Vitaly Sazanovich" of IndexedTreeMap for the put(K, V) method */
 	public Integer increment(K key) {
         Entry<K, Integer> t = root;
         if (t == null) {

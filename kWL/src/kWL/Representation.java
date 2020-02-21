@@ -1,13 +1,29 @@
+package kWL;
+
 import java.util.TreeSet;
 
 import exceptions.InvalidPermutationException;
 
+/**
+ * Class that provides static methods to deal with permutations given in cyclic format as a String.
+ * The String format used is the format GAP uses when representing permutations.
+ * Also contains a method to format and print a permutation instance.
+ * 
+ * @author Karim
+ */
 public class Representation {
 	
 	/**
-	 *  Permutation given in Cyclic format "(x1,x2,x3)(y1,y2,y3,y4)"
-	 *  with any amount of spaces or tab spaces.
-	 *  An integer should appear at most once and should be between [1, degree].
+	 * Parses a String given in the GAP format to a Permutation instance.
+	 * Degree of the String must be given, and must be able to cover all the integers appearing
+	 * in the Permutation.
+	 * 
+	 * @param	s		the String to parse
+	 * @param	degree	the degree of the permutation
+	 * 
+	 *  Permutation should be given in Cyclic format "(x1,x2,x3)(y1,y2,y3,y4)" where x1, x2, y1, ... are integers.
+	 *  Any amount of spaces or tab spaces anywhere is allowed.
+	 *  Any integer should appear at most once and should be in the interval [1, degree].
 	 */
 	public static Permutation parsePermutation(String s, int degree) throws InvalidPermutationException {
 		if (s.length() <= 1) throw new InvalidPermutationException(
@@ -28,7 +44,7 @@ public class Representation {
 				if (s.charAt(i) == '(') {
 					foundOpeningBracket = true;
 				}
-				else if (s.charAt(i) != ' ' && s.charAt(i) != '\t') {
+				else if (s.charAt(i) != ' ' && s.charAt(i) != '\t' && s.charAt(i) != '\n' && s.charAt(i) != '\r' && s.charAt(i) != '\0') {
 					error = true;
 					break;
 				}
@@ -38,7 +54,7 @@ public class Representation {
 					processingInteger = 1;
 					h = i;
 				}
-				else if (s.charAt(i) != ' ' && s.charAt(i) != '\t') {
+				else if (s.charAt(i) != ' ' && s.charAt(i) != '\t' && s.charAt(i) != '\n' && s.charAt(i) != '\r' && s.charAt(i) != '\0') {
 					error = true;
 					break;
 				}
@@ -89,7 +105,7 @@ public class Representation {
 						first = -1;
 					}
 				}
-				else if (s.charAt(i) == ' ' || s.charAt(i) == '\t') {
+				else if (s.charAt(i) == ' ' || s.charAt(i) == '\t' || s.charAt(i) == '\n' || s.charAt(i) == '\r' || s.charAt(i) == '\0') {
 					processingInteger = 2;
 					
 					j = i;
@@ -124,7 +140,7 @@ public class Representation {
 						prev = temp;
 					}
 				}
-				else if (s.charAt(i) == ' ' || s.charAt(i) == '\t') {
+				else if (s.charAt(i) == ' ' || s.charAt(i) == '\t' || s.charAt(i) == '\n' || s.charAt(i) == '\r' || s.charAt(i) == '\0') {
 					
 				}
 				else if (s.charAt(i) == ')') {
@@ -171,7 +187,13 @@ public class Representation {
 	}
 	
 	/**
-	 *  Same as above, except gets the start and end indices of where to parse.
+	 *  Same method as the above, except gets the start and end indices of where to parse in the String,
+	 *  as in, it ignores everything not in the interval [start, end).
+	 *  
+	 * @param	s		the String to parse
+	 * @param	degree	the degree of the permutation
+	 * @param	start	start index
+	 * @param	end		end index
 	 */
 	public static Permutation parsePermutation(String s, int start, int end, int degree) throws InvalidPermutationException {
 		if (end-start <= 1) throw new InvalidPermutationException(
@@ -192,7 +214,7 @@ public class Representation {
 				if (s.charAt(i) == '(') {
 					foundOpeningBracket = true;
 				}
-				else if (s.charAt(i) != ' ' && s.charAt(i) != '\t') {
+				else if (s.charAt(i) != ' ' && s.charAt(i) != '\t' && s.charAt(i) != '\n' && s.charAt(i) != '\r' && s.charAt(i) != '\0') {
 					error = true;
 					break;
 				}
@@ -202,7 +224,7 @@ public class Representation {
 					processingInteger = 1;
 					h = i;
 				}
-				else if (s.charAt(i) != ' ' && s.charAt(i) != '\t') {
+				else if (s.charAt(i) != ' ' && s.charAt(i) != '\t' && s.charAt(i) != '\n' && s.charAt(i) != '\r' && s.charAt(i) != '\0') {
 					error = true;
 					break;
 				}
@@ -213,7 +235,7 @@ public class Representation {
 				}
 				else if (s.charAt(i) == ',') {
 					processingInteger = 0;
-
+					
 					temp = Integer.parseInt(s.substring(h, i));
 					if (temp >= 1 && temp <= degree && !ts.contains(temp)) {
 						ts.add(temp);
@@ -253,7 +275,7 @@ public class Representation {
 						first = -1;
 					}
 				}
-				else if (s.charAt(i) == ' ' || s.charAt(i) == '\t') {
+				else if (s.charAt(i) == ' ' || s.charAt(i) == '\t' || s.charAt(i) == '\n' || s.charAt(i) == '\r' || s.charAt(i) == '\0') {
 					processingInteger = 2;
 					
 					j = i;
@@ -288,7 +310,7 @@ public class Representation {
 						prev = temp;
 					}
 				}
-				else if (s.charAt(i) == ' ' || s.charAt(i) == '\t') {
+				else if (s.charAt(i) == ' ' || s.charAt(i) == '\t' || s.charAt(i) == '\n' || s.charAt(i) == '\r' || s.charAt(i) == '\0') {
 					
 				}
 				else if (s.charAt(i) == ')') {
@@ -334,6 +356,11 @@ public class Representation {
 		return p;
 	}
 	
+	/**
+	 * Formats a permutation to the GAP format and prints it.
+	 * 
+	 * @param	p	the permutation instance
+	 */
 	public static void printCyclic(Permutation p) {
 		boolean[] printed = new boolean[p.array.length];
 		boolean printedSomething = false;
