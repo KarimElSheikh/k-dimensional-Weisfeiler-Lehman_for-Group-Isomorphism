@@ -2,10 +2,9 @@ package datastructure;
 
 /**
  * User: Karim Elsheikh
- * Date: 14.02.2020
- * Time: 01:53
+ * Date: 2020-November-03
  * Email: k_elsheikh18@cs.uni-kl.de
- * I'm reporting that I've made the following changes in this file:
+ * I've made precisely the following minor changes in this file:
  * 
  * Changed the access modifier of the following variables from private to protected:
  * comparator, root, size, modCount.
@@ -15,9 +14,9 @@ package datastructure;
  * That was done to make a subclass able to implement the increment(K, Integer)
  * method which is based around the method put(K, V) and which needs access to
  * those variables/methods. The Implementation of the method is used in
- * the Subclass IndexedTreeMap2 in this project.
+ * the subclass IndexedTreeMap2 in this project.
  *
- * The rest of the code below is exactly the same as in the 07.02.2013 version by "Vitaly Sazanovich".
+ * The rest of the code below is exactly the same as in the source file released by "Vitaly Sazanovich".
  */
 /**
  * User: Vitaly Sazanovich

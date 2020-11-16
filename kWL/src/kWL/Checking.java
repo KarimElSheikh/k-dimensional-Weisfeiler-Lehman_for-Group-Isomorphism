@@ -1,3 +1,25 @@
+/*
+    k-dimensional Weisfeiler-Lehman for Group Isomorphism, a Java implementation
+    of the method with various tests to help analyze the method.
+    Copyright (C) 2020 Karim Elsheikh
+
+    This file is part of k-dimensional Weisfeiler-Lehman for Group Isomorphism,
+    the Java project.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kWL;
 
 import java.io.BufferedInputStream;
@@ -5,7 +27,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -21,8 +42,8 @@ import data.ArrayListOfData;
 import data.Data;
 import datastructure.IndexedTreeMap2;
 import datastructure.IndexedTreeSet;
-import group.data.InitialColour;
-import group.data.Colour;
+import group.data.InitialColor;
+import group.data.Color;
 import group.data.GroupInvariant;
 
 /**
@@ -40,107 +61,18 @@ public class Checking {
 	static ArrayListComparator arrayListComparator = new ArrayListComparator();
 	
 	/**
-	 * Computes a crc32 hash from a file given as a path: the string argument filepath.
-	 * 
-	 * @param	filepath	a string that is the path to the file that is to be hashed.
-	 * 
-	 * @return	long		crc32 hash of the file in 'filepath'.
-	 */
-	public static long checksumInputStream(String filepath) throws IOException {
-		
-		InputStream inputStreamn = new FileInputStream(filepath);
-		CRC32 crc = new CRC32();
-		int cnt;
-		
-		while ((cnt = inputStreamn.read()) != -1) {
-			crc.update(cnt);
-		}
-		
-		inputStreamn.close();
-		return crc.getValue();
-	}
-	
-	/**
-	 * Computes a crc32 hash from a file given as a path: the string argument filepath.
-	 * This one used a BufferedInputStream and thus should (always?) be preferred.
-	 * 
-	 * @param	filepath	a string that is the path to the file that is to be hashed.
-	 * 
-	 * @return	long		crc32 hash of the file in 'filepath'.
-	 */
-	public static long checksumBufferedInputStream(String filepath) throws IOException {
-		
-		size = (int) Files.size(Paths.get(filepath));
-		
-		InputStream inputStream = new BufferedInputStream(new FileInputStream(filepath.toString()));
-		CRC32 crc = new CRC32();
-		int cnt;
-		
-		while ((cnt = inputStream.read()) != -1) {
-			crc.update(cnt);
-		}
-		
-		inputStream.close();
-		return crc.getValue();
-	}
-	
-	/**
-	 * Computes a crc32 hash from a file given as a path: the string argument filepath.
-	 * This one uses the class RandomAccessFile to read the file.
-	 * 
-	 * @param	filepath	a string that is the path to the file that is to be hashed.
-	 * 
-	 * @return	long		crc32 hash of the file in 'filepath'.
-	 */
-	public static long checksumRandomAccessFile(String filepath) throws IOException {
-		
-		RandomAccessFile randAccfile = new RandomAccessFile(filepath, "r");
-		long length = randAccfile.length();
-		CRC32 crc = new CRC32();
-		for (long i = 0; i < length; i++) {
-			randAccfile.seek(i);
-			int cnt = randAccfile.readByte();
-			crc.update(cnt);
-		}
-		
-		randAccfile.close();
-		return crc.getValue();
-	}
-	
-	/**
-	 * Computes a crc32 hash from a file given as a path: the string argument filepath.
-	 * This one used the classes FileChannel and MappedByteBuffer to read the file.
-	 * 
-	 * @param	filepath	a string that is the path to the file that is to be hashed.
-	 * 
-	 * @return	long		crc32 hash of the file in 'filepath'.
-	 */
-	public static long checksumMappedFile(String filepath) throws IOException {
-		
-		FileInputStream inputStream = new FileInputStream(filepath);
-		FileChannel fileChannel = inputStream.getChannel();
-		int len = (int) fileChannel.size();
-		MappedByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, len);
-		CRC32 crc = new CRC32();
-		
-		for (int cnt = 0; cnt < len; cnt++) {
-			int i = buffer.get(cnt);
-			crc.update(i);
-		}
-		
-		inputStream.close();
-		return crc.getValue();
-	}
-	
-	/**
-	 * This method works its way through the subfolder for the invariant data of each order in the
-	 * interval [startOrder, maxOrder], for each group it gets the file size and the crc32 hash of
-	 * the group's files (each group has 3 files for each round).
-	 * Then an ArrayListOfData instance is created for the group that holds the group id along with the
-	 * file size and hash information. They are sorted using a convenient comparison function such that
-	 * if 2 groups have the same invariant data, their respective ArrayListOfData instances will be
-	 * adjacent after sorting, and when comparing them they will be equal.
-	 * We check for equality for every 2 adjacent ArrayListOfData and print the group ids.
+	 * This method utilizes the invariant data (<ProjectOrWorking_Directory>\Invariants\). The
+	 * method loops over the interval of the group order [startOrder, maxOrder] given by their
+	 * respective arguments, for each order it goes through every group of such order, gets the
+	 * file size and the crc32 hash of the group's files (3 for each round). Then an ArrayListOfData
+	 * instance is created for each group that holds the group id along with the file size and hash
+	 * information. They are then sorted using a convenient compareTo method (defined in the class's
+	 * source file). By using such a method, we ensure that if 2 groups have the same invariant
+	 * data, their respective ArrayListOfData instances will be adjacent to each other after sorting.
+	 * Finally, we check for equality between every 2 adjacent ArrayListOfData instances and print
+	 * the group ids if we find a pair.
+	 * This was the method that was used to find all the collisions for order 128, and
+	 * some of those for order 256.
 	 */
 	public static void checkForCollisions(int startOrder, int maxOrder) throws IOException {
 		
@@ -167,22 +99,22 @@ public class Checking {
 						
 						if (pathString.substring(pathString.lastIndexOf("\\") + 1).equals("#0")) {
 							long crc32 = checksumBufferedInputStream(pathString + "\\C");
-							b.array.add(new Data(size, crc32));
-							crc32 = checksumBufferedInputStream(pathString + "\\numberOfColourClasses.txt");
-							b.array.add(new Data(size, crc32));
-							crc32 = checksumBufferedInputStream(pathString + "\\uniqueInitialColours");
-							b.array.add(new Data(size, crc32));
+							b.arrayList.add(new Data(size, crc32));
+							crc32 = checksumBufferedInputStream(pathString + "\\numberOfColorClasses.txt");
+							b.arrayList.add(new Data(size, crc32));
+							crc32 = checksumBufferedInputStream(pathString + "\\uniqueInitialColors");
+							b.arrayList.add(new Data(size, crc32));
 						}
 						else {
 							long crc32 = checksumBufferedInputStream(pathString + "\\C");
-							b.array.add(new Data(size, crc32));
-							crc32 = checksumBufferedInputStream(pathString + "\\numberOfColourClasses.txt");
-							b.array.add(new Data(size, crc32));
-							crc32 = checksumBufferedInputStream(pathString + "\\uniqueColours");
-							b.array.add(new Data(size, crc32));
+							b.arrayList.add(new Data(size, crc32));
+							crc32 = checksumBufferedInputStream(pathString + "\\numberOfColorClasses.txt");
+							b.arrayList.add(new Data(size, crc32));
+							crc32 = checksumBufferedInputStream(pathString + "\\uniqueColors");
+							b.arrayList.add(new Data(size, crc32));
 						}
-					} catch (IOException e) {
-						e.printStackTrace();
+					} catch (IOException exception) {
+						exception.printStackTrace();
 					}
 				});
 				
@@ -200,31 +132,6 @@ public class Checking {
 	}
 	
 	/**
-	 * Reads a serialised Java Object that was written to the hard drive and returns it.
-	 * 
-	 * @param	filepath	a string that is the path to the file that is to be read.
-	 * 
-	 * @return	Object		a java class instance that is simply casted as an "Object".
-	 */
-	public static Object ReadObjectFromFile(String filepath) {
-		
-		try {
-			
-			FileInputStream fileIn = new FileInputStream(filepath);
-			ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-			
-			Object obj = objectIn.readObject();
-			
-			objectIn.close();
-			return obj;
-			
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
-	
-	/**
 	 * This method works pretty much mostly the same as checkForCollisions(), it works its way through the subfolder
 	 * for the invariant data of each order in the interval [startOrder, maxOrder], for each group it reads all the
 	 * files and casts them to the correct class.
@@ -232,6 +139,7 @@ public class Checking {
 	 * such that if 2 groups have the same invariant data, their respective GroupInvariant instances will be
 	 * adjacent after sorting, and when comparing them they will be equal.
 	 * We check for equality for every 2 adjacent ArrayListOfData and print the group ids.
+	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
 	public static void checkForCollisions2(int startOrder, int maxOrder) throws IOException {
@@ -251,9 +159,9 @@ public class Checking {
 			ArrayList<GroupInvariant> GIs = new ArrayList<GroupInvariant>();
 			
 			for (int j = 1; j <= groups; j++) {
-				AtomicReference<IndexedTreeSet<InitialColour>> initialColours = new AtomicReference<>();
-				ArrayList<Integer> numberOfColourClassesArray = new ArrayList<Integer>();
-				ArrayList<IndexedTreeSet<Colour>> uniqueColoursArray = new ArrayList<IndexedTreeSet<Colour>>();
+				AtomicReference<IndexedTreeSet<InitialColor>> initialColors = new AtomicReference<>();
+				ArrayList<Integer> numberOfColorClassesArray = new ArrayList<Integer>();
+				ArrayList<IndexedTreeSet<Color>> uniqueColorsArray = new ArrayList<IndexedTreeSet<Color>>();
 				ArrayList<IndexedTreeMap2<Integer>> colourCountsArray = new ArrayList<IndexedTreeMap2<Integer>>();
 				AtomicInteger maxRound = new AtomicInteger(Integer.MIN_VALUE);
 				
@@ -264,27 +172,27 @@ public class Checking {
 						maxRound.set(Math.max(maxGroupID.get(), Integer.parseInt(pathString.substring(pathString.lastIndexOf("\\") + 2))));
 						
 						if (pathString.substring(pathString.lastIndexOf("\\") + 1).equals("#0")) {
-							colourCountsArray.add((IndexedTreeMap2<Integer>) ReadObjectFromFile(pathString + "\\C"));
+							colourCountsArray.add((IndexedTreeMap2<Integer>) Helpers.ReadObjectFromFile(pathString + "\\C"));
 							
-							byte[] fileArray = Files.readAllBytes(Paths.get(pathString + "\\numberOfColourClasses.txt"));
-							numberOfColourClassesArray.add(Integer.parseInt(new String(fileArray, 0, fileArray.length-2, "UTF-8")));
+							byte[] fileArray = Files.readAllBytes(Paths.get(pathString + "\\numberOfColorClasses.txt"));
+							numberOfColorClassesArray.add(Integer.parseInt(new String(fileArray, 0, fileArray.length-2, "UTF-8")));
 							
-							initialColours.set((IndexedTreeSet<InitialColour>) ReadObjectFromFile(pathString + "\\uniqueInitialColours"));
+							initialColors.set((IndexedTreeSet<InitialColor>) Helpers.ReadObjectFromFile(pathString + "\\uniqueInitialColors"));
 						}
 						else {
-							colourCountsArray.add((IndexedTreeMap2<Integer>) ReadObjectFromFile(pathString + "\\C"));
+							colourCountsArray.add((IndexedTreeMap2<Integer>) Helpers.ReadObjectFromFile(pathString + "\\C"));
 							
-							byte[] fileArray = Files.readAllBytes(Paths.get(pathString + "\\numberOfColourClasses.txt"));
-							numberOfColourClassesArray.add(Integer.parseInt(new String(fileArray, 0, fileArray.length-2, "UTF-8")));
+							byte[] fileArray = Files.readAllBytes(Paths.get(pathString + "\\numberOfColorClasses.txt"));
+							numberOfColorClassesArray.add(Integer.parseInt(new String(fileArray, 0, fileArray.length-2, "UTF-8")));
 							
-							uniqueColoursArray.add((IndexedTreeSet<Colour>) ReadObjectFromFile(pathString + "\\uniqueColours"));
+							uniqueColorsArray.add((IndexedTreeSet<Color>) Helpers.ReadObjectFromFile(pathString + "\\uniqueColors"));
 						}
-					} catch (IOException e) {
-						e.printStackTrace();
+					} catch (IOException exception) {
+						exception.printStackTrace();
 					}
 				});
 				
-				GroupInvariant gi = new GroupInvariant(j, order, maxRound.get(), initialColours.get(), numberOfColourClassesArray, uniqueColoursArray, colourCountsArray);
+				GroupInvariant gi = new GroupInvariant(j, order, maxRound.get(), initialColors.get(), numberOfColorClassesArray, uniqueColorsArray, colourCountsArray);
 				GIs.add(gi);
 			}
 			
@@ -298,8 +206,122 @@ public class Checking {
 		}
 	}
 	
-	public static void main(String[] args) throws IOException {
-		checkForCollisions(256, 256);
+	/**
+	 * Computes a crc32 hash from a file given as a path: the string argument filePath.
+	 * This one used the BufferedInputStream class and thus should (always?) be preferred.
+	 * 
+	 * @param	filePath  a string that is the path to the file that is to be hashed
+	 * 
+	 * @return	long      crc32 hash of the file in 'filePath'
+	 */
+	public static long checksumBufferedInputStream(String filePath) throws IOException {
+		
+		size = (int) Files.size(Paths.get(filePath));
+		
+		InputStream inputStream = new BufferedInputStream(new FileInputStream(filePath));
+		CRC32 crc = new CRC32();
+		int cnt;
+		
+		while ((cnt = inputStream.read()) != -1) {
+			crc.update(cnt);
+		}
+		
+		inputStream.close();
+		return crc.getValue();
 	}
 	
+	/**
+	 * Computes a crc32 hash from a file given as a path: the string argument filePath.
+	 * Method is unused and will likely remain so.
+	 * 
+	 * @param	filePath  a string that is the path to the file that is to be hashed
+	 * 
+	 * @return	long      crc32 hash of the file in 'filePath'
+	 */
+	public static long checksumInputStream(String filePath) throws IOException {
+		
+		InputStream inputStreamn = new FileInputStream(filePath);
+		CRC32 crc = new CRC32();
+		int cnt;
+		
+		while ((cnt = inputStreamn.read()) != -1) {
+			crc.update(cnt);
+		}
+		
+		inputStreamn.close();
+		return crc.getValue();
+	}
+	
+	/**
+	 * Computes a crc32 hash from a file given as a path: the string argument filePath.
+	 * This one used the FileChannel and MappedByteBuffer classes to read the file.
+	 * Method is unused and will likely remain so.
+	 * 
+	 * @param	filePath  a string that is the path to the file that is to be hashed
+	 * 
+	 * @return	long      crc32 hash of the file in 'filePath'
+	 */
+	public static long checksumMappedFile(String filePath) throws IOException {
+		
+		FileInputStream inputStream = new FileInputStream(filePath);
+		FileChannel fileChannel = inputStream.getChannel();
+		int len = (int) fileChannel.size();
+		MappedByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, len);
+		CRC32 crc = new CRC32();
+		
+		for (int cnt = 0; cnt < len; cnt++) {
+			int i = buffer.get(cnt);
+			crc.update(i);
+		}
+		
+		inputStream.close();
+		return crc.getValue();
+	}
+	
+	/**
+	 * Computes a crc32 hash from a file given as a path (the string argument filePath).
+	 * This one uses the RandomAccessFile class to read the file.
+	 * Method is unused and will likely remain so.
+	 * 
+	 * @param	filePath  a string that is the path to the file that is to be hashed
+	 * 
+	 * @return	long      crc32 hash of the file in 'filePath'
+	 */
+	public static long checksumRandomAccessFile(String filePath) throws IOException {
+		
+		RandomAccessFile randAccfile = new RandomAccessFile(filePath, "r");
+		long length = randAccfile.length();
+		CRC32 crc = new CRC32();
+		for (long i = 0; i < length; i++) {
+			randAccfile.seek(i);
+			int cnt = randAccfile.readByte();
+			crc.update(cnt);
+		}
+		
+		randAccfile.close();
+		return crc.getValue();
+	}
+	
+	public static void main(String[] args) throws IOException {
+		/*
+		 *	For the following, make sure to have the invariant information for the groups of the
+		 *  orders in the range specified in each Method call.
+		 *  The generation of invariant data
+		 *  generated as explained in the main method of kWLClass at the usage of the
+		 *  genearateInvariants_OfGroups_OfOrdersInRange() Methods.
+		 *  
+		 *  The only collisions (pairs of undifferentiated groups) found are in these order ranges are in the
+		 *  groups of order 128 and 256. In order 128 there's 10, and in order 256 there's over 150 in the
+		 *  first 8000 groups hence plenty is expected.
+		 */
+		
+		checkForCollisions2(10, 10);
+		// checkForCollisions(65, 127);
+		// checkForCollisions(128, 128);
+		
+		
+		// checkForCollisions(129, 192);
+		// checkForCollisions(193, 255);
+		// checkForCollisions(256, 256);
+	}
 }
