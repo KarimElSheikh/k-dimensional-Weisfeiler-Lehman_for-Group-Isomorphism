@@ -18,12 +18,12 @@ The k-dimensional Weisfeiler-Lehman method is a combinatorial method that is use
 * Rest of the documentation in the classes: "Checking", "kWLclass", and "GroupInvariant".
 
 ## Notes about the usage of the batch files
-About what the files "OutputGroupsStartingFromOrder*.bat" do:
+About what the batch files "OutputGroupsStartingFromOrder*.bat" do:
 * They detect the installation directory of GAP through registry<font><sup>[1](#footnote1)</sup></font>, and copy the original "gap.bat" (from gap-4.11.0\bin\ under Windows) to a temporary file in the working directory, then change 2 specific lines in it then run the resulting batch file.
 
-* The changes done to "gap.bat" (effective in temporary file only): Now it changes the working directory to "C:\Users\<User name>\eclipse-workspace\kWL" where we assumed the directory of the Java project will be. And additionally modifies the line that starts GAP ("mintty.exe") to load the respective "OutputGroupsStartingFromOrder*.g" file from the working directory.
+* The changes that are done to the default "gap.bat" (effective in temporary file only) are as follows: Now it changes the working directory to "C:\Users\‍\<User name\>\eclipse-workspace\kWL" where we assumed the directory of the Java project will be, and additionally modifies the line that starts GAP ("mintty.exe") to load the respective "OutputGroupsStartingFromOrder*.g" file from the working directory.
 
-* Now it runs the modified and temporary batch file to launch GAP then deletes it immediately.
+* Now the batch files run the modified and temporary "gap.bat" file to launch GAP then delete it immediately.
 
 * You may want do set the working directory and run the files "OutputGroupsStartingFromOrder*.g" in your own way.
 
