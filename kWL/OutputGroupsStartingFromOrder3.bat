@@ -3,7 +3,12 @@
 REM This file's main purpose is to run GAP with the correct working Directory,
 REM and open OutputGroupsStartingFromOrder.g that's located in the working Directory.
 REM All it does is copy your default gap.bat, modify lines
-REM numbered #6 and #7 in the copied version and then run it.
+REM #6 and #7 in the copied version and then run it.
+
+REM Enter your GAP path that contains the bin directory in the next variable,
+REM if the variable is left blank, the batch file will proceed to read the GAP
+REM path from the registry.
+Set "GAPdir="
 
 REM In the next line, set the working directory you'll be using to run the java classes (kWLClass and Checking), and GAP
 REM will launch with the working directory specified here so that they're both able to communicate with each other.
@@ -11,8 +16,12 @@ Set "GAPandJavaWorkingDir=%HOMEDRIVE%%HOMEPATH%\eclipse-workspace\kWL"
 
 Set "gap49026Temp=%TEMP%.\gap49026.tmp.bat"
 
-for /F "usebackq skip=2 tokens=2* eol= " %%a in (`REG QUERY HKEY_CURRENT_USER\Software\GAP /ve 2^>nul`) do (
-	Set "gap49026Inst=%%b"
+if defined GAPdir (
+	Set "gap49026Inst=%GAPdir%"
+) else (
+	for /F "usebackq skip=2 tokens=2* eol= " %%a in (`REG QUERY HKEY_CURRENT_USER\Software\GAP /ve 2^>nul`) do (
+		Set "gap49026Inst=%%b"
+	)
 )
 
 SetLocal EnableDelayedExpansion EnableExtensions
@@ -46,6 +55,7 @@ EndLocal
 
 Start /D "%gap49026Inst%" /Wait %ComSpec% /c "%gap49026Temp%"
 Del %gap49026Temp%
+Set GAPdir=
 Set GAPandJavaWorkingDir=
 Set gap49026Temp=
 Set gap49026Inst=

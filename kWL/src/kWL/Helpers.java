@@ -1,7 +1,7 @@
 /*
     k-dimensional Weisfeiler-Lehman for Group Isomorphism, a Java implementation
     of the method with various tests to help analyze the method.
-    Copyright (C) 2020 Karim Elsheikh
+    Copyright (C) 2021 Karim Elsheikh
 
     This file is part of k-dimensional Weisfeiler-Lehman for Group Isomorphism,
     the Java project.

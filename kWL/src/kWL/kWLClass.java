@@ -1,7 +1,7 @@
 /*
     k-dimensional Weisfeiler-Lehman for Group Isomorphism, a Java implementation
     of the method with various tests to help analyze the method.
-    Copyright (C) 2020 Karim Elsheikh
+    Copyright (C) 2021 Karim Elsheikh
 
     This file is part of k-dimensional Weisfeiler-Lehman for Group Isomorphism,
     the Java project.
@@ -31,6 +31,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NavigableSet;
@@ -361,28 +364,28 @@ public class kWLClass {
 		
 		TreeMap<ArrayList<Integer>, Color> F1 = new TreeMap<ArrayList<Integer>, Color> (arrayListComparator);
 		TreeMap<ArrayList<Integer>, Color> F2 = new TreeMap<ArrayList<Integer>, Color> (arrayListComparator);
-	//	Maps from pair of indices to Color (color starting from Round 1)
+		//	Maps from pair of indices to Color (color starting from Round 1)
 		
 		IndexedTreeSet<Color> uniqueColors = new IndexedTreeSet<Color>();
-	//	Set containing all different Colors, to allow mapping Colors to integers
+		//	Set containing all different Colors, to allow mapping Colors to integers
 		
 		TreeMap<Integer, Integer> colourIndexToNewIndex1 = new TreeMap<Integer, Integer>();
 		TreeMap<Integer, Integer> colourIndexToNewIndex2 = new TreeMap<Integer, Integer>();
-	//	Maps the old color's index to the new color's index, used to check convergence
+		//	Maps the old color's index to the new color's index, used to check convergence
 		
 		IndexedTreeMap2<Integer> D1;
 		IndexedTreeMap2<Integer> D2;
-	//	IndexedTreeMap<Integer, Integer> with increment
-	//	Multisets of the >new< colors in each group, where the colors are referred to by integers
+		//	IndexedTreeMap<Integer, Integer> with increment
+		//	Multisets of the >new< colors in each group, where the colors are referred to by integers
 		
 		TreeMap<ArrayList<Integer>, Integer> N1;
 		TreeMap<ArrayList<Integer>, Integer> N2;
-	//	Maps from pair of indices to >new< color index
+		//	Maps from pair of indices to >new< color index
 		
 		boolean converges1 = false;
 		boolean converges2 = false;
 		
-	//	Start of Rounds ≥ 1
+		//	Start of Rounds ≥ 1
 		for (p = 1; p <= maxRounds; p++) {
 			converges1 = true;
 			converges2 = true;
@@ -500,23 +503,21 @@ public class kWLClass {
 		G = generate(S, degree);
 		
 		int order = G.length;
-		int p = 0;
+		int curRound = 0;
 		
-	//	Maps from pair of indices to Pair (color in Round 0)
-		TreeMap<ArrayList<Integer>, InitialColor> E = new TreeMap<ArrayList<Integer>, InitialColor> (arrayListComparator);
+		HashSet<InitialColor> uniqueInitialColors = new HashSet<>();
+		// Indexed TreeSet containing all the different colors, to give each color an index (a number).		
 		
-	//	Set containing all different Pairs, to allow mapping colors to integers
-		IndexedTreeSet<InitialColor> uniqueInitialColors = new IndexedTreeSet<InitialColor>();
+		TreeMap<ArrayList<Integer>, Integer> M = new TreeMap<>(arrayListComparator);
+		// TreeMap that maps from a pair of element indices to an index of color.
 		
-		IndexedTreeMap2<Integer> C = new IndexedTreeMap2<Integer>();
-	//	IndexedTreeMap<Integer, Integer> with increment
-	//	Multisets of the colors in each group, where the colors are referred to by integers
+		// Round 0 - Start
 		
-		TreeMap<ArrayList<Integer>, Integer> M = new TreeMap<ArrayList<Integer>, Integer> (arrayListComparator);
-	//	Maps from pair of indices to color index
-		
-	//	Round 0
+		System.out.println("Round: 0");
+		// Discovering the colors step:
+		System.out.println("Generating colors");
 		for (int i = 1; i < order; i++) {
+			System.out.println("i: " + (i+1));
 			for (int j = 1; j < order; j++) {
 				if (i == j)
 					continue;
@@ -526,69 +527,76 @@ public class kWLClass {
 				InitialColor X = generatedByAndYields(G, A, degree);
 				
 				uniqueInitialColors.add(X);
-				
-				E.put(A, X);
 			}
 		}
+		int numberOfColorClasses = uniqueInitialColors.size();
+		ArrayList<InitialColor> uniqueInitialColors_AL = new ArrayList<>(uniqueInitialColors);
+		Collections.sort(uniqueInitialColors_AL);
+		HashMap<InitialColor, Integer> HM_initialColors = new HashMap<>();
+		for(int i = 0; i < numberOfColorClasses; i++) HM_initialColors.put(uniqueInitialColors_AL.get(i), i);
+		int[] C = new int[numberOfColorClasses];
+		// Array that maps the index of each color to its count (number of appearances).
 		
+		// Fill "M", mapping from every pair of element indices to the index of the pair's color.
+		// Fill "C", mapping from every index of a color to its count.
+		System.out.println("Mapping tuples to color indices");
 		for (int i = 1; i < order; i++) {
+			System.out.println("i: " + (i+1));
 			for (int j = 1; j < order; j++) {
 				if (i == j)
 					continue;
 				
 				ArrayList<Integer> A = new ArrayList<Integer> (Arrays.asList(i, j));
 				
-				InitialColor X = E.get(A);
+				InitialColor X = generatedByAndYields(G, A, degree);
 				
-				Integer t = uniqueInitialColors.entryIndex(X);
+				int t = HM_initialColors.get(X);
 				
-				C.increment(t);
-				
+				C[t]++;
 				M.put(A, t);
 			}
 		}
-	//	End of Round 0
+		
+		// Round 0 - End
+		
 		Helpers.createDirectory(System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + "0");
-		List<String> lines = Arrays.asList("" + C.keySet().size());
+		List<String> lines = Arrays.asList(Integer.toString(numberOfColorClasses));
 		Path file = Paths.get(System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + "0/numberOfColorClasses.txt");
 		Files.write(file, lines, StandardCharsets.UTF_8);
-		Helpers.writeObjectToFile(uniqueInitialColors, System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + "0/uniqueInitialColors");
+		Helpers.writeObjectToFile(uniqueInitialColors_AL, System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + "0/uniqueInitialColors");
 		Helpers.writeObjectToFile(C, System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + "0/C");
 		
-	//	System.out.println("Round " + 0 + ":");
-	//	System.out.println("Number of unique Color Classes: " + uniqueInitialColors.size());
+		// System.out.println("Round " + 0 + ":");
+		// System.out.println("Number of unique Color Classes: " + uniqueInitialColors.size());
 		
-	//	Maps from pair of indices to Color (color starting from Round 1)
-		TreeMap<ArrayList<Integer>, Color> F = new TreeMap<ArrayList<Integer>, Color> (arrayListComparator);
+		HashSet<Color> uniqueColors = new HashSet<>();
+		// Indexed TreeSet containing all the different colors, to give each color an index (a number).
 		
-	//	Set containing all different Colors, to allow mapping Colors to integers
-		IndexedTreeSet<Color> uniqueColors = new IndexedTreeSet<Color>();
+		TreeMap<Integer, Integer> colorIndexToNewIndex = new TreeMap<>();
+		// TreeMap that maps the old color's index to the new color's index, used to check convergence.
 		
-	//	Maps the old color's index to the new color's index, used to check convergence
-		TreeMap<Integer, Integer> colourIndexToNewIndex = new TreeMap<Integer, Integer>();
+		int[] D;
+		// Array that maps the index of each color to its count (number of appearances).
 		
-	//	IndexedTreeMap<Integer, Integer> with increment
-	//	Multisets of the >new< colors in each group, where the colors are referred to by integers
-		IndexedTreeMap2<Integer> D;
-		
-	//	Maps from pair of indices to >new< color index
 		TreeMap<ArrayList<Integer>, Integer> N;
+		// TreeMap that maps from a pair of element indices to an index of color.
 		
 		boolean converges = false;
 		
-	//	Start of Rounds ≥ 1
-		for (p = 1; p <= maxRounds; p++) {
+		// Start of Rounds ≥ 1
+		
+		for (curRound = 1; curRound <= maxRounds; curRound++) {
 			converges = true;
-			
-			D = new IndexedTreeMap2<Integer>();
-			N = new TreeMap<ArrayList<Integer>, Integer> (arrayListComparator);
 
+			System.out.println();
+			System.out.println("Round: " + curRound);
+			System.out.println("Generating colors");
 			for (int i = 1; i < order; i++) {
+				System.out.println("i: " + (i+1));
 				for (int j = 1; j < order; j++) {
 					if (i == j)
 						continue;
 					
-				//	IndexedTreeMap<Integer, Integer> with increment
 					IndexedTreeMap2<Pair> t = new IndexedTreeMap2<Pair>();
 					for (int k = 1; k < order; k++) {
 						if (k != i && k != j) {
@@ -598,70 +606,89 @@ public class kWLClass {
 						}
 					}
 					
-					ArrayList<Integer> A = new ArrayList<Integer> (Arrays.asList(i, j));
+					ArrayList<Integer> A = new ArrayList<>(Arrays.asList(i, j));
 					
 					Color c = new Color(M.get(A), t);
-					
-					F.put(A, c);
 					
 					uniqueColors.add(c);
 				}
 			}
 			
+			numberOfColorClasses = uniqueColors.size();
+			ArrayList<Color> uniqueColors_AL = new ArrayList<>(uniqueColors);
+			Collections.sort(uniqueColors_AL);
+			HashMap<Color, Integer> HM = new HashMap<>();
+			for(int i = 0; i < numberOfColorClasses; i++) HM.put(uniqueColors_AL.get(i), i);
+			D = new int[numberOfColorClasses];
+			N = new TreeMap<ArrayList<Integer>, Integer> (arrayListComparator);
+			
+			System.out.println("Mapping tuples to color indices");
 			for (int i = 1; i < order; i++) {
+				System.out.println("i: " + (i+1));
 				for (int j = 1; j < order; j++) {
 					if (i == j)
 						continue;
 					
-					ArrayList<Integer> A = new ArrayList<Integer> (Arrays.asList(i, j));
+					IndexedTreeMap2<Pair> t = new IndexedTreeMap2<Pair>();
+					for (int k = 1; k < order; k++) {
+						if (k != i && k != j) {
+							ArrayList<Integer> A1 = new ArrayList<Integer> (Arrays.asList(k, j));
+							ArrayList<Integer> A2 = new ArrayList<Integer> (Arrays.asList(i, k));
+							t.increment(new Pair(M.get(A1), M.get(A2)));
+						}
+					}
 					
-					Integer c_index = uniqueColors.entryIndex(F.get(A));
+					ArrayList<Integer> A = new ArrayList<>(Arrays.asList(i, j));
+					
+					Color c = new Color(M.get(A), t);
+					
+					Integer c_index = HM.get(c);
 					
 					if (converges) {
-						Integer temp = colourIndexToNewIndex.put(M.get(A), c_index);
+						Integer temp = colorIndexToNewIndex.put(M.get(A), c_index);
 						if (temp != null && !temp.equals(c_index)) {
 							converges = false;
 						}
 					}
 					
 					N.put(A, c_index);
-					D.increment(c_index);
+					D[c_index]++;
 				}
 			}
 			
-		//	System.out.println("Round " + p //+ ":");
-		//	System.out.println("Number of unique Color Classes: " + uniqueColors.size());
+			// System.out.println("Round " + curRound //+ ":");
+			// System.out.println("Number of unique Color Classes: " + uniqueColors.size());
 			
-		//	Cleanup at the end of a round
-			colourIndexToNewIndex.clear();
-			uniqueColors.clear();
+			Arrays.fill(C, 0);
+			C = D;  // New colors will now be the old colors (for the next round)
 			
 			M.clear();
 			M = N;  // New colors will now be the old colors (for the next round)
 			
-			C.clear();
-			C = D;  // New colors will now be the old colors (for the next round)
-			
-			Helpers.createDirectory(System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + p);
-			lines = Arrays.asList("" + C.keySet().size());
-			file = Paths.get(System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + p + "/numberOfColorClasses.txt");
+			Helpers.createDirectory(System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + curRound);
+			lines = Arrays.asList(Integer.toString(numberOfColorClasses));
+			file = Paths.get(System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + curRound + "/numberOfColorClasses.txt");
 			Files.write(file, lines, StandardCharsets.UTF_8);
-			Helpers.writeObjectToFile(uniqueColors, System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + p + "/uniqueColors");
-			Helpers.writeObjectToFile(C, System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + p + "/C");
+			Helpers.writeObjectToFile(uniqueColors_AL, System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + curRound + "/uniqueColors");
+			Helpers.writeObjectToFile(C, System.getProperty("user.dir") + "/Invariants/" + globalOrder + "/" + index + "/" + '\u0023' + curRound + "/C");
 			
-			F.clear();
+			// Cleanup at the end of a round
+			colorIndexToNewIndex.clear();
+			uniqueColors.clear();
+			
 			if (converges) {
-				roundsTaken = p;
+				roundsTaken = curRound;
 				break;
 			}
 		}
-	//	End of Rounds ≥ 1
+		
+		// End of Rounds ≥ 1
 		
 		if (!converges)
-			p--;
+			curRound--;
 		
-		numberOfColorClasses1 = C.keySet().size();
-		roundsTaken = p;
+		numberOfColorClasses1 = numberOfColorClasses;
+		roundsTaken = curRound;
 		
 		return true;
 	}
@@ -1243,12 +1270,15 @@ public class kWLClass {
 		@SuppressWarnings("unused")
 		int maxRounds_arg = 1000000000;  // Large number used to signify just running till convergence.
 		
-		kWLtest1(maxRounds_arg);
+		/*
+		 * kWL Set of tests #1
+		 */
+		// kWLtest1(maxRounds_arg);
 		
 		/*
 		 *	Do note that the below test needs the GAP file "OutputGroupsStartingFromOrder128.g"
 		 *  to be running in GAP in the same working directory that this Java class is running
-		 *  in, so make sure to do if you're going to uncomment the line to test it.
+		 *  in, so make sure to do so if you're going to uncomment the line to test it.
 		 *  For the below test, try setting the last argument "printString" to "true" to see
 		 *  how the command String is sent to the parse() method above which starts the kWL
 		 *  method, utilizing exactly the 2 lists of generators provided by GAP.
@@ -1275,5 +1305,11 @@ public class kWLClass {
 		 */
 		// genearateInvariants_OfGroups_OfOrdersInRange(33, 127, maxRounds_arg, "kWLOutput.csv", false);
 		// genearateInvariants_OfGroups_OfOrdersInRange(128, 128, maxRounds_arg, "kWLOutput.csv", false);
+		
+		/*
+		 * The latest commit tested this, and the memory consumption was indeed reduced in kWLinv() (with
+		 * the downside that all colors have to be generated).
+		 */
+		genearateInvariants_OfGroups_OfOrdersInRange(512, 512, maxRounds_arg, "kWLOutput.csv", false);
 	}
 }

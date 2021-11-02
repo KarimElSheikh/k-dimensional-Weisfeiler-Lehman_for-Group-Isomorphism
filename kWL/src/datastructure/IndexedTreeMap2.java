@@ -3,6 +3,14 @@ package datastructure;
 import java.io.Serializable;
 import java.util.Comparator;
 
+/**
+ * This class is just a modification of IndexedTreeMap with Integer as the value type forcibly,
+ * and the increment value method added.
+ * 
+ * @author Karim
+ *
+ * @param <K>
+ */
 public class IndexedTreeMap2<K> extends IndexedTreeMap<K, Integer> implements Serializable {
 	
 	/* version ID for serialized form. */

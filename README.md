@@ -1,3 +1,4 @@
+
 # k-dimensional Weisfeiler-Lehman for Group Isomorphism
 
 A Java implementation of the k-dimensional Weisfeiler-Lehman method to test Group Isomorphism between 2 groups given by a list of generators with various tests to help analyze the method.
@@ -13,7 +14,7 @@ It is a 2-dimensional Weisfeiler-Lehman that considers every pair of elements. I
 The k-dimensional Weisfeiler-Lehman method is a combinatorial method that is used to test graph isomorphism and has been widely studied in the literature for graph isomorphism. In most cases (informally speaking) it will detect a difference between 2 non-isomorphic graphs, this applies to even the 1-dimensional one. For group isomorphism, the same idea was applied with a sensible notion of an initial colour for every pair of the group (hence 2-dimensional).
 
 ## To do
-* It is possible to drastically reduce the memory usage if we index the the colors while we haven't still finalized the color set. It is on plan soon.
+* It is possible to drastically reduce the memory usage if we index the the colors while we haven't still finalized the color set. It is on plan soon (Now this is done for kWLinv() but not kWL() ).
 * Also on plan is to change the serialization of the information gathered by the algorithm to be more portable and future-proof for any class name changes, etc... . Probably, we will seek some text or binary format.
 * Rest of the documentation in the classes: "Checking", "kWLclass", and "GroupInvariant".
 

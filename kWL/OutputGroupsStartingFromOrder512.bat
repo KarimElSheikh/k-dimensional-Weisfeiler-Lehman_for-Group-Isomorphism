@@ -43,7 +43,7 @@ for /F usebackq^ tokens^=*^ delims^=^ eol^= %%a in ("%InstallDirectory%\bin\gap.
 		)
 	) else if "!Test!" == "start ""GA" (
 		>>"%TempFile%" (
-			Echo !Line! OutputGroupsStartingFromOrder33.g
+			Echo !Line! OutputGroupsStartingFromOrder512.g
 		)
 	) else (
 		>>"%TempFile%" (
@@ -55,6 +55,7 @@ EndLocal
 
 Start /D "%gap49026Inst%" /Wait %ComSpec% /c "%gap49026Temp%"
 Del %gap49026Temp%
+Set GAPdir=
 Set GAPandJavaWorkingDir=
 Set gap49026Temp=
 Set gap49026Inst=

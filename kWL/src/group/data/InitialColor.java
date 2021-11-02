@@ -24,6 +24,7 @@ package group.data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * InitialColor is a class used to denote the initial color data for a single group/subgroup
@@ -126,7 +127,36 @@ public class InitialColor implements Comparable<InitialColor>, Serializable {
 	 * 
 	 * @return  true if "anotherInitialColor" is equal to this InitialColor object, false otherwise
 	 */
-	public boolean equals(InitialColor anotherInitialColor) {
-		return compareTo(anotherInitialColor) == 0;
+	public boolean equals(Object anotherInitialColor) {
+		return compareTo((InitialColor) anotherInitialColor) == 0;
+	}
+	
+	public int hashCode() {
+	    int p = 31;
+	    int m = 1000_000_009;
+	    long hashValue = 0;
+	    long pPow = 1;
+	    
+	    for(Integer[] genSequence : generatedBy) {
+	    	for(int entry : genSequence) {
+				hashValue = (hashValue + entry * pPow) % m;
+		        pPow = (pPow * p) % m;
+	    	}
+	    }
+	    
+	    int i = 1;
+	    for(Integer[] yieldsFromMultByThisGen : yield) {
+    		hashValue = (hashValue + (i+1) * pPow) % m;
+	        pPow = (pPow * p) % m;
+	    	
+	    	for(int entry : yieldsFromMultByThisGen) {
+	    		hashValue = (hashValue + entry * pPow) % m;
+		        pPow = (pPow * p) % m;
+	    	}
+	    	
+	    	i++;
+	    }
+		
+		return (int) hashValue;
 	}
 }

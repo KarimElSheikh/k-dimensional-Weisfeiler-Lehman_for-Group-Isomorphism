@@ -1,7 +1,7 @@
 /*
     k-dimensional Weisfeiler-Lehman for Group Isomorphism, a Java implementation
     of the method with various tests to help analyze the method.
-    Copyright (C) 2020 Karim Elsheikh
+    Copyright (C) 2021 Karim Elsheikh
 
     This file is part of k-dimensional Weisfeiler-Lehman for Group Isomorphism,
     the Java project.
@@ -117,7 +117,31 @@ public class Color implements Comparable<Color>, Serializable {
 	 * 
 	 * @return  true if "anotherColor" is equal to this Color object, false otherwise
 	 */
-	public boolean equals(Color anotherColor) {
-		return compareTo(anotherColor) == 0;
+	public boolean equals(Object anotherColor) {
+		return compareTo((Color) anotherColor) == 0;
+	}
+	
+	public int hashCode() {
+	    int p = 31;
+	    int m = 1000_000_009;
+	    long hashValue = 0;
+	    long pPow = 1;
+	    
+	    Iterator<Pair> it = multiSet.navigableKeySet().iterator();
+	    Iterator<Integer> valuesIt = multiSet.values().iterator();
+	    
+		while (it.hasNext()) {
+			Pair pairOfInts = it.next();
+			hashValue = (hashValue + pairOfInts.id1 * pPow) % m;
+	        pPow = (pPow * p) % m;
+	        
+			hashValue = (hashValue + pairOfInts.id2 * pPow) % m;
+	        pPow = (pPow * p) % m;
+	        
+	        hashValue = (hashValue + valuesIt.next() * pPow) % m;
+	        pPow = (pPow * p) % m;
+		}
+		
+		return (int) hashValue;
 	}
 }
