@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.NavigableSet;
 
 import datastructure.IndexedTreeMap2;
+import utilities.Pair;
 
 /**
  * Color is a class that is used to denote the color data for a single group/subgroup starting from
@@ -42,7 +43,7 @@ public class Color implements Comparable<Color>, Serializable {
 	/* version ID for serialized form. */
 	private static final long serialVersionUID = 5006072381800913170L;
 	
-	public Integer color;
+	public int color;
 	public IndexedTreeMap2<Pair> multiSet;
 	
 	/**
@@ -53,7 +54,7 @@ public class Color implements Comparable<Color>, Serializable {
 	 * @param color     the Integer "color"
 	 * @param multiSet  the IndexedTreeMap2<Pair> "multiSet"
 	 */
-	public Color(Integer color, IndexedTreeMap2<Pair> multiSet) {
+	public Color(int color, IndexedTreeMap2<Pair> multiSet) {
 		this.color = color;
 		this.multiSet = multiSet;
 	}

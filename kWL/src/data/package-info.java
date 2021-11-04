@@ -1,7 +1,11 @@
 /*
     k-dimensional Weisfeiler-Lehman for Group Isomorphism, a Java implementation
-    of the method with various tests to help analyze the method.
-    Copyright (C) 2020 Karim Elsheikh
+    of the Weisfeiler-Lehman combinatorial method with various launch
+    configurations to test, analyze the method, as well as gathering info
+    from running the method on finite groups. The implementation currently
+    supports 2-dimensional Weisfeiler-Lehman and is planned to have support
+    for any number of dimensions in the future (hence the name "k-dimensional").
+    Copyright (C) 2021 Karim Elsheikh
 
     This file is part of k-dimensional Weisfeiler-Lehman for Group Isomorphism,
     the Java project.
@@ -20,23 +24,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package exceptions;
-
 /**
- * Checked exception is thrown during parsing a Permutation string if the
- * string is in a wrong format (i.e., does not match the cyclic format).
+ * data contains classes which are used to store info about general
+ * files.
  * <p>
- * The parsePermutation Method in the Representation class throws this
- * exception.
+ * The use of these classes facilitates the handling of large amounts
+ * of file data (file sizes, file hashes, etc.) of files of
+ * arbitrary types.
  * 
  * @author Karim Elsheikh
  */
-public class InvalidPermutationException extends Exception {
-	
-	/* version ID for serialized form. */
-	private static final long serialVersionUID = -7898722555145938677L;
-	
-	public InvalidPermutationException(String errorMessage) {
-		super(errorMessage);
-	}
-}
+package data;

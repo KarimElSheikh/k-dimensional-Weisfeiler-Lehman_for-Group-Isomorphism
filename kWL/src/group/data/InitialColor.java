@@ -44,17 +44,17 @@ public class InitialColor implements Comparable<InitialColor>, Serializable {
 	/* version ID for serialized form. */
 	private static final long serialVersionUID = 8304232391352687748L;
 	
-	public ArrayList<Integer[]> generatedBy;
-	public Integer[][] yield;
+	public int[][] generatedBy;
+	public int[][] yield;
 	
 	/**
 	 * Constructs an InitialColor object with given ArrayList of Integer arrays "generatedBy" and
 	 * 2D Integer array "yield".
 	 *
-	 * @param generatedBy  the ArrayList of Integer arrays
-	 * @param yield        the 2D Integer array "yield"
+	 * @param generatedBy  the ArrayList of int arrays
+	 * @param yield        the 2D int array "yield"
 	 */
-	public InitialColor(ArrayList<Integer[]> generatedBy, Integer[][] yield) {
+	public InitialColor(int[][] generatedBy, int[][] yield) {
 		this.generatedBy = generatedBy;
 		this.yield = yield;
 	}
@@ -82,17 +82,17 @@ public class InitialColor implements Comparable<InitialColor>, Serializable {
 	 *          this InitialColor compares greater, all as explained above.
 	 */
 	public int compareTo(InitialColor anotherInitialColor) {
-		int cmp = generatedBy.size() - anotherInitialColor.generatedBy.size();
+		int cmp = generatedBy.length - anotherInitialColor.generatedBy.length;
 		if (cmp != 0) return cmp;
 		
-		for (int i = 0; i < generatedBy.size(); i++) {
-			int length1 = generatedBy.get(i).length;
-			int length2 = anotherInitialColor.generatedBy.get(i).length;
+		for (int i = 0; i < generatedBy.length; i++) {
+			int length1 = generatedBy[i].length;
+			int length2 = anotherInitialColor.generatedBy[i].length;
 			cmp = length1 - length2;
 			if (cmp != 0) return cmp;
 			
 			for (int j = 0; j < length1; j++) {
-				cmp = generatedBy.get(i)[j] - anotherInitialColor.generatedBy.get(i)[j];
+				cmp = generatedBy[i][j] - anotherInitialColor.generatedBy[i][j];
 				if (cmp != 0) return cmp;
 			}
 		}
@@ -137,7 +137,7 @@ public class InitialColor implements Comparable<InitialColor>, Serializable {
 	    long hashValue = 0;
 	    long pPow = 1;
 	    
-	    for(Integer[] genSequence : generatedBy) {
+	    for(int[] genSequence : generatedBy) {
 	    	for(int entry : genSequence) {
 				hashValue = (hashValue + entry * pPow) % m;
 		        pPow = (pPow * p) % m;
@@ -145,7 +145,7 @@ public class InitialColor implements Comparable<InitialColor>, Serializable {
 	    }
 	    
 	    int i = 1;
-	    for(Integer[] yieldsFromMultByThisGen : yield) {
+	    for(int[] yieldsFromMultByThisGen : yield) {
     		hashValue = (hashValue + (i+1) * pPow) % m;
 	        pPow = (pPow * p) % m;
 	    	

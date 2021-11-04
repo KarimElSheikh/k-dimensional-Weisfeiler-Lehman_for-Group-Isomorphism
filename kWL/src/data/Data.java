@@ -24,9 +24,14 @@ package data;
 
 /**
  * Data is a class that is used to hold some information about a file: its size and the crc32 hash.
- * The crc32 hash needs unsigned 32 bits to be stored, we store it in a long data type.
- * 
- * <p>This class is mainly used in the main method of the class 'Checking'.
+ * The crc32 hash needs unsigned 32 bits to be stored, hence it is stored in a long data type.
+ * <p>
+ * This class is mainly used in the main method of the class {@link kWL.Checking}.
+ * <br>
+ * Some description of the use case there is described in the class {@link data.ArrayListOfData}.
+ * <p>
+ * This object type is currently not used anywhere else in the project
+ * other the <tt>Checking</tt> class.
  * 
  * @author Karim Elsheikh
  */

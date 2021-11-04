@@ -1,6 +1,10 @@
 /*
     k-dimensional Weisfeiler-Lehman for Group Isomorphism, a Java implementation
-    of the method with various tests to help analyze the method.
+    of the Weisfeiler-Lehman combinatorial method with various launch
+    configurations to test, analyze the method, as well as gathering info
+    from running the method on finite groups. The implementation currently
+    supports 2-dimensional Weisfeiler-Lehman and is planned to have support
+    for any number of dimensions in the future (hence the name "k-dimensional").
     Copyright (C) 2021 Karim Elsheikh
 
     This file is part of k-dimensional Weisfeiler-Lehman for Group Isomorphism,
@@ -33,20 +37,60 @@ package kWL;
  */
 public class Permutation implements Comparable<Permutation> {
 
-	public Integer[] array;
+	public int[] array;
 
-	public Permutation(Integer[] array) {
+	public Permutation(int[] array) {
 		this.array = array;
 	}
 
 	public static Permutation identityPermutation(int degree) {
-		Integer[] array = new Integer[degree + 1];
+		int[] array = new int[degree + 1];
 		for (int i = 1; i <= degree; i++)
 			array[i] = i;
 
 		return new Permutation(array);
 	}
 
+	/**
+	 * Compares this Permutation with another Permutation p. Assumes both arrays'
+	 * lengths are equal (i.e., Both permutations have been initialized with the
+	 * same degree). Compares starting from index 1.
+	 * 
+	 * @param p  the Permutation to compare to
+	 * @return   int which is the result of the comparison (0 if equal)
+	 */
+	public int compareTo(Permutation p) {
+		int cmp;
+
+		for (int i = 1; i < array.length; i++) {
+			cmp = array[i] - p.array[i];
+			if( cmp != 0 )
+				return cmp;
+		}
+
+		return 0;
+	}
+
+	public boolean equals(Object p) {
+		return compareTo((Permutation) p) == 0;
+	}
+	
+	/**
+	 * Copies the Permutation starting from index 0 (index 0 is supposed to be
+	 * irrelevant in my usage, but we copy it too anyway).
+	 * 
+	 * @return  Permutation object that is an exact copy of this Permutation
+	 */
+	public Permutation copy() {
+		int[] arrayCopy = new int[array.length];
+
+		for (int i = 0; i < array.length; i++) {
+			arrayCopy[i] = array[i];
+		}
+
+		return new Permutation(arrayCopy);
+	}
+	
 	/**
 	 * Multiplies this Permutation with another Permutation p and returns the
 	 * result. Assumes both arrays' lengths are equal which is the case if they've
@@ -56,52 +100,34 @@ public class Permutation implements Comparable<Permutation> {
 	 * @return   Permutation object that is the result of multiplying this Permutation by p
 	 */
 	public Permutation multiply(Permutation p) {
-		Integer[] arrayOut = new Integer[array.length];
+		int[] arrayOut = new int[array.length];
 
-		for (int i = 1; i < array.length; i++){
+		for (int i = 1; i < array.length; i++) {
 			arrayOut[i] = p.array[array[i]];
 		}
 
 		return new Permutation(arrayOut);
 	}
-
+	
 	/**
-	 * Copies the Permutation starting from index 0 (index 0 is supposed to be
-	 * irrelevant in my usage, but we copy it too anyway).
+	 * Returns a hash code for this {@code Permutation}.
+	 * result. Assumes both arrays' lengths are equal which is the case if they've
+	 * been initialized with the same degree.
 	 * 
-	 * @return  Permutation object that is an exact copy of this Permutation
+	 * @return  a hash code value for this {@code Permutation} object which is computed using
+	 *          powers of a prime which is already determined.
 	 */
-	public Permutation copy() {
-		Integer[] arrayCopy = new Integer[array.length];
-
-		for (int i = 0; i < array.length; i++){
-			arrayCopy[i] = array[i];
-		}
-
-		return new Permutation(arrayCopy);
-	}
-
-	/**
-	 * Compares this Permutation with another Permutation p. Assumes both arrays'
-	 * lengths are equal which is the case if they've been initialized with the same
-	 * degree. Compares starting from index 1.
-	 * 
-	 * @param p  the Permutation to compare to
-	 * @return   int which is the result of the comparison (0 if equal)
-	 */
-	public int compareTo(Permutation p) {
-		int cmp;
-
-		for (int i = 1; i < array.length; i++){
-			cmp = array[i] - p.array[i];
-			if( cmp != 0 )
-				return cmp;
-		}
-
-		return 0;
-	}
-
-	public boolean equals(Permutation p) {
-		return compareTo(p) == 0;
+	public int hashCode() {
+	    int p = 31;
+	    int m = 1000_000_009;
+	    long hashValue = 0;
+	    long pPow = 1;
+	    
+	    for (int i = 1; i < array.length; i++) {
+			hashValue = (hashValue + array[i] * pPow) % m;
+	        pPow = (pPow * p) % m;
+	    }
+	    
+	    return (int) hashValue;
 	}
 }

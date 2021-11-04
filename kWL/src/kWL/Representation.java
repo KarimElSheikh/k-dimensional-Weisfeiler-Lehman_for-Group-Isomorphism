@@ -1,6 +1,10 @@
 /*
     k-dimensional Weisfeiler-Lehman for Group Isomorphism, a Java implementation
-    of the method with various tests to help analyze the method.
+    of the Weisfeiler-Lehman combinatorial method with various launch
+    configurations to test, analyze the method, as well as gathering info
+    from running the method on finite groups. The implementation currently
+    supports 2-dimensional Weisfeiler-Lehman and is planned to have support
+    for any number of dimensions in the future (hence the name "k-dimensional").
     Copyright (C) 2021 Karim Elsheikh
 
     This file is part of k-dimensional Weisfeiler-Lehman for Group Isomorphism,

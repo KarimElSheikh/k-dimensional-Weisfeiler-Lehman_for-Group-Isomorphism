@@ -5,7 +5,8 @@ import java.util.Comparator;
 
 /**
  * This class is just a modification of IndexedTreeMap with Integer as the value type forcibly,
- * and the increment value method added.
+ * and the increment method added whose job is to increment the value for the given key in 
+ * one go.
  * 
  * @author Karim
  *

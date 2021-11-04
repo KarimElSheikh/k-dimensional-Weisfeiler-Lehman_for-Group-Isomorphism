@@ -20,7 +20,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package group.data;
+package utilities;
 
 import java.io.Serializable;
 
